@@ -1,3 +1,7 @@
+# Python Datastuctures & Utilities
+
+Reference Udemy course:
+https://www.udemy.com/course/algorithms-and-data-structures-in-python
 
 ### Environment management
 
