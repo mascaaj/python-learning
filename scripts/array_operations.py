@@ -6,11 +6,30 @@ class ArrayOperations:
         self.is_string = is_string
         self.is_string_list = is_string_list
 
+    def is_integer_duplicate(self):
+        # need to add exceptions here
+        for num in self.arr_data:
+            # if the number at the index location has been flipped, 
+            # current value is duplicate
+            if self.arr_data[abs(num)]>=0:
+                self.arr_data[abs(num)] = -self.arr_data[abs(num)]
+                # print(self.arr_data[num])
+            else:
+                print("repetition is found at", str(abs(num)))
+
     def is_anagram(self):    
         if self.is_string_list:
             self.subject = list(self.arr_data[0])
             self.anagram = list(self.arr_data[1])
-        print(self.subject,self.anagram)
+        if len(self.subject) == len(self.anagram):
+            self.subject = sorted(self.subject)
+            self.anagram = sorted(self.anagram)
+            for letter in range(len(self.subject)):
+                if self.subject[letter] != self.anagram[letter]:
+                    return False
+                return True
+        # print(self.subject,self.anagram)
+        return False
 
     def reverse_array(self):
         if self.is_string==True:
@@ -48,8 +67,11 @@ class ArrayOperations:
         return False
 
 if __name__ == "__main__":
-    test_array = ArrayOperations(["restful","fluster"],is_string_list=True)
-    test_array.is_anagram()
+    test_array = ArrayOperations([1,4,2,-41,3,2,1])
+    print(test_array.is_integer_duplicate())
+
+    # test_array = ArrayOperations(["restful","fluster"],is_string_list=True)
+    # print(test_array.is_anagram())
 
     # test_array = ArrayOperations(1235)
     # print(test_array.reverse_integer())
