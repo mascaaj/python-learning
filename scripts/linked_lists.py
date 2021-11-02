@@ -28,7 +28,7 @@ class LinkedList:
 
         # start at the begining
         actual_node = self.head
-        
+
         while actual_node.next_node is not None:
             print(actual_node.data)
             actual_node = actual_node.next_node
@@ -45,13 +45,24 @@ class LinkedList:
 
     def print_head(self):
         print("head node: ", self.head.data)
-        print("head node reference", self.head.next_node)
 
-    def delete_start(self):
-        pass
+    def remove(self,data):
+        previous_node = None
+        actual_node = self.head
+        while actual_node.next_node is not None and actual_node.data != data:
+            previous_node = actual_node
+            actual_node = actual_node.next_node
+        
+        if not actual_node:
+            return
+
+        if not previous_node:
+            self.head = actual_node.next_node
+        else:
+            previous_node.next_node = actual_node.next_node
 
     def node_count(self):
-        return self.number_of_nodes
+        print("current size of nodes: ", self.number_of_nodes)
 
 if __name__=="__main__":
     lltest = LinkedList()
@@ -61,7 +72,13 @@ if __name__=="__main__":
     lltest.insert_start(99)
     lltest.insert_start(72)
     lltest.insert_start(1)
+    lltest.node_count()
+    lltest.traverse()
     lltest.insert_start("Bob")
     lltest.print_head()
+    lltest.remove(31)
     lltest.insert_end(44)
+    lltest.remove("Bob")
+    lltest.insert_end(87)
+    lltest.insert_end(54)
     lltest.traverse()
