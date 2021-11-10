@@ -1,9 +1,10 @@
 # Class Implementation & methods for linked lists
+import sys
+import os
+import time
+sys.path.append(".")
 
-class Node:
-    def __init__(self,data):
-        self.data = data
-        self.next_node = None
+from list_node import Node
 
 class LinkedList:
     
@@ -65,20 +66,41 @@ class LinkedList:
         print("current size of nodes: ", self.number_of_nodes)
 
 if __name__=="__main__":
+
+    test_name = "timing_tests"
     lltest = LinkedList()
-    lltest.insert_start(20)
-    lltest.print_head()
-    lltest.insert_start(31)
-    lltest.insert_start(99)
-    lltest.insert_start(72)
-    lltest.insert_start(1)
-    lltest.node_count()
-    lltest.traverse()
-    lltest.insert_start("Bob")
-    lltest.print_head()
-    lltest.remove(31)
-    lltest.insert_end(44)
-    lltest.remove("Bob")
-    lltest.insert_end(87)
-    lltest.insert_end(54)
-    lltest.traverse()
+
+    if test_name == "functional_tests":
+        lltest.insert_start(20)
+        lltest.print_head()
+        lltest.insert_start(31)
+        lltest.insert_start(99)
+        lltest.insert_start(72)
+        lltest.insert_start(1)
+        lltest.node_count()
+        lltest.traverse()
+        lltest.insert_start("Bob")
+        lltest.print_head()
+        lltest.remove(31)
+        lltest.insert_end(44)
+        lltest.remove("Bob")
+        lltest.insert_end(87)
+        lltest.insert_end(54)
+        lltest.traverse()
+    elif test_name == "timing_tests":
+        time_start = time.time()
+        for i in range(50000):
+            lltest.insert_start(i)
+        time_stop = time.time()
+        lltest.node_count()
+        delta_time = time_stop-time_start
+        print("Delta time for linked list insertion", delta_time)
+
+        array=[]
+        time_start = time.time()
+        for i in range(50000):
+            array.insert(0 , i)
+        time_stop = time.time()
+        lltest.node_count()
+        delta_time = time_stop-time_start
+        print("Delta time for list insertion", delta_time)
