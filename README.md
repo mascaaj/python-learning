@@ -13,3 +13,10 @@ virtualenv -p python3 py-learn
 source py-learn/bin/activate
 pip install -r requirements.txt
 ```
+
+### Run flake8 linter
+
+Ensure static analysis per rules in root setup.cfg
+
+- Navigate to folder with python files
+- Run `flake8`

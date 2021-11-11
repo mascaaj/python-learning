@@ -1,18 +1,16 @@
 # Class Implementation & methods for double linked lists
+from list_node import Node
 import sys
-import os
-import time
 sys.path.append(".")
 
-from list_node import Node
 
 class DoubleLinkedList:
-    
+
     def __init__(self):
         self.head = None
         self.tail = None
         self.number_of_nodes = 0
-    
+
     def insert(self, data):
         self.number_of_nodes += 1
         new_node = Node(data)
@@ -33,7 +31,7 @@ class DoubleLinkedList:
             while actual_node is not None:
                 print(actual_node.data)
                 actual_node = actual_node.next_node
-        elif direction =="backward":
+        elif direction == "backward":
             actual_node = self.tail
             while actual_node is not None:
                 print(actual_node.data)
@@ -47,16 +45,15 @@ class DoubleLinkedList:
     def print_tail(self):
         print("tail node: ", self.tail.data)
 
-    def remove(self,data):
+    def remove(self, data):
         # previous_node = None
         # actual_node = self.head
         # while actual_node.next_node is not None and actual_node.data != data:
         #     previous_node = actual_node
         #     actual_node = actual_node.next_node
-        
+
         # if not actual_node:
         #     return
-
         # if not previous_node:
         #     self.head = actual_node.next_node
         # else:
@@ -66,7 +63,8 @@ class DoubleLinkedList:
     def node_count(self):
         print("current size of nodes: ", self.number_of_nodes)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     lltest = DoubleLinkedList()
     lltest.insert(1)
     lltest.print_head()

@@ -1,17 +1,17 @@
 # Class Implementation & methods for linked lists
+from list_node import Node
+
 import sys
-import os
 import time
 sys.path.append(".")
 
-from list_node import Node
 
 class LinkedList:
-    
+
     def __init__(self):
         self.head = None
         self.number_of_nodes = 0
-    
+
     def insert_start(self, data):
         self.number_of_nodes += 1
         new_node = Node(data)
@@ -30,7 +30,7 @@ class LinkedList:
         while fast_pointer.next_node and fast_pointer.next_node.next_node:
             fast_pointer = fast_pointer.next_node.next_node
             slow_pointer = slow_pointer.next_node
-        
+
         print("Middle Node data : ", slow_pointer.data)
 
     def reverse(self):
@@ -44,7 +44,7 @@ class LinkedList:
             current_node = next_node
         self.head = prev_node
 
-    def insert_end(self,data):
+    def insert_end(self, data):
         self.number_of_nodes += 1
         new_node = Node(data)
 
@@ -68,13 +68,13 @@ class LinkedList:
     def print_head(self):
         print("head node: ", self.head.data)
 
-    def remove(self,data):
+    def remove(self, data):
         previous_node = None
         actual_node = self.head
         while actual_node.next_node is not None and actual_node.data != data:
             previous_node = actual_node
             actual_node = actual_node.next_node
-        
+
         if not actual_node:
             return
 
@@ -86,7 +86,8 @@ class LinkedList:
     def node_count(self):
         print("current size of nodes: ", self.number_of_nodes)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
 
     test_name = "timing_tests"
     lltest = LinkedList()
@@ -121,5 +122,5 @@ if __name__=="__main__":
         lltest.reverse()
         lltest.traverse()
         lltest.get_middle_node()
-        delta_time = time_stop-time_start
+        delta_time = time_stop - time_start
         print("Delta time for linked list insertion", delta_time)
