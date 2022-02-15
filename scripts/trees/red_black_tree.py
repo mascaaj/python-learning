@@ -1,13 +1,22 @@
 """
-Binary search tree implemntation
+Red black tree implemntation
+Copied from binary search tree implementation
+
+@todo
+15NOV21
+Clean up methods and prototypes
+Add violation handling <- rotation & recoloring
+
+15FEB22
+Complete & tested
 """
 
 import sys
 sys.path.append(".")
-from tree_node import BSTNode
+from tree_node import Color, RBNode
 
 
-class BinarySearchTree:
+class RedBlackTree:
 
     def __init__(self):
         self.root = None
@@ -20,8 +29,8 @@ class BinarySearchTree:
         """
         if not self.root:
             print("root empty")
-            self.root = BSTNode(data, None)
-            # print("check for populated root ",self.root.data)
+            self.root = RBNode(data, None)
+            self.settle_violation(self.root)
         else:
             self.insert_node(data, self.root)
 
@@ -62,13 +71,15 @@ class BinarySearchTree:
             if node.leftChild:
                 self.insert_node(data, node.leftChild)
             else:
-                node.leftChild = BSTNode(data, node)
+                node.leftChild = RBNode(data, node)
+                self.settle_violation(node.leftChild)
         else:
             # print("insert as rightChild ", node.data, data)
             if node.rightChild:
                 self.insert_node(data, node.rightChild)
             else:
-                node.rightChild = BSTNode(data, node)
+                node.rightChild = RBNode(data, node)
+                self.settle_violation(node.rightChild)
 
     def traverse_in_order(self, node):
         if node.leftChild:
@@ -193,63 +204,145 @@ class BinarySearchTree:
 
         return node
 
-
-class TreeComparator:
-
-    def compare_trees(self, node1, node2):
+    def rotate_right(self, node):
         """
-        Base cases:
-            if node1 and node2 are none
-            nodes are not equal, return false
+        Update references
+        Set new parent
+        update parent
         """
-        # print("node1 data", node1.data)
-        # print("node2 data", node2.data)
-        if not node1 or not node2:
-            return node1 == node2
+        # update references
+        print("rotating to the right on node :", node.data)
+        temp_left_node = node.leftChild
+        t = temp_left_node.rightChild
+        temp_left_node.rightChild = node
+        node.leftChild = t
 
-        if node1.data is not node2.data:
+        # inform child about new parent assignment
+        if t:
+            t.parent = node
+        temp_parent = node.parent
+        node.parent = temp_left_node
+        temp_left_node.parent = temp_parent
+
+        # update parent about new child assignment
+        # First check if head node, next check if node reference was left or right
+        if temp_left_node.parent and temp_left_node.parent.leftChild == node:
+            temp_left_node.parent.leftChild = temp_left_node
+        if temp_left_node.parent and temp_left_node.parent.rightChild == node:
+            temp_left_node.parent.rightChild = temp_left_node
+
+        # root node assignment
+        if node == self.root:
+            self.root = temp_left_node
+
+    def rotate_left(self, node):
+        """
+        Update references
+        Set new parent
+        update parent
+        """
+        # update references
+        print("rotating to the left on node :", node.data)
+        temp_right_node = node.rightChild
+        t = temp_right_node.leftChild
+        temp_right_node.leftChild = node
+        node.rightChild = t
+
+        # inform child about new parent assignment
+        if t:
+            t.parent = node
+        temp_parent = node.parent
+        node.parent = temp_right_node
+        temp_right_node.parent = temp_parent
+
+        # update parent about new child assignment
+        # First check if head node, next check if node reference was left or right
+        if temp_right_node.parent and temp_right_node.parent.leftChild == node:
+            temp_right_node.parent.leftChild = temp_right_node
+        if temp_right_node.parent and temp_right_node.parent.rightChild == node:
+            temp_right_node.parent.rightChild = temp_right_node
+
+        # root node assignment
+        if node == self.root:
+            self.root = temp_right_node
+
+    def is_red(self, node):
+        if not node:
             return False
+        return node.color == Color.RED
 
-        # Recursively check left and right nodes
-        left_same = self.compare_trees(node1.leftChild, node2.leftChild)
-        right_same = self.compare_trees(node1.rightChild, node2.rightChild)
-        return left_same and right_same
+    def settle_violation(self, node):
+        """
+        1. Check for uncle status and its right/left childness
+        2. Match the 4 cases
+        3. recolor / rotate as necessary
+        """
+        while node != self.root and self.is_red(node) and self.is_red(node.parent):
+            parent_node = node.parent
+            grandparent_node = parent_node.parent
+
+            if grandparent_node.leftChild == parent_node:
+                uncle_node = grandparent_node.rightChild
+                # case 1 & 4, recoloring
+                if uncle_node and self.is_red(uncle_node):
+                    print("case 1 or 4")
+                    print("recoloring grandparent node", grandparent_node.data)
+                    grandparent_node.color = Color.RED
+                    print("recoloring parent node", parent_node.data)
+                    parent_node.color = Color.BLACK
+                    print("recoloring uncle node", uncle_node.data)
+                    uncle_node.color = Color.BLACK
+                    node = grandparent_node
+                else:
+                    # Uncle node exists and is black, rotation, recoloring
+                    if node == parent_node.rightChild:
+                        self.rotate_left(parent_node)
+                        node = parent_node
+                        parent_node = node.parent
+                    parent_node.color = Color.BLACK
+                    print("recoloring parent node", parent_node.data)
+                    grandparent_node.color = Color.RED
+                    print("recoloring grandparent node", grandparent_node.data)
+                    self.rotate_right(grandparent_node)
+            else:
+                uncle_node = grandparent_node.leftChild
+                # case 1 & 4, recoloring
+                if uncle_node and self.is_red(uncle_node):
+                    print("case 1 or 4")
+                    print("recoloring grandparent node", grandparent_node.data)
+                    grandparent_node.color = Color.RED
+                    print("recoloring parent node", parent_node.data)
+                    parent_node.color = Color.BLACK
+                    print("recoloring uncle node", uncle_node.data)
+                    uncle_node.color = Color.BLACK
+                    node = grandparent_node
+                else:
+                    # Uncle node exists and is black, rotation, recoloring
+                    if node == parent_node.leftChild:
+                        self.rotate_right(parent_node)
+                        node = parent_node
+                        parent_node = node.parent
+                    parent_node.color = Color.BLACK
+                    print("recoloring parent node", parent_node.data)
+                    grandparent_node.color = Color.RED
+                    print("recoloring grandparent node", grandparent_node.data)
+                    self.rotate_left(grandparent_node)
+
+        if self.is_red(self.root):
+            print("coloring root to black")
+            self.root.color = Color.BLACK
 
 
 if __name__ == "__main__":
-    bst = BinarySearchTree()
-    bst.insert(10)
-    bst.insert(30)
-    bst.insert(-1000)
-    bst.insert(3)
-    bst.insert(-4000)
-    bst.insert(-5000)
-    bst.insert(80)
-    bst.insert(900)
-    bst.insert(12)
-    bst.insert(2)
-    bst.insert(6)
-    bst.insert(11)
-    bst.insert(15)
-    bst.traverse()
-    # print("min item %s" % bst.get_min_value())
-    # print("max item %s" % bst.get_max_value())
-    bst.remove(12)
-    bst.traverse()
 
-    bst3 = BinarySearchTree()
-    bst4 = BinarySearchTree()
-
-    bst3.insert(10)
-    bst3.insert(5)
-    bst3.insert(13)
-    bst3.insert(25)
-    bst3.insert(11)
-
-    bst4.insert(10)
-    bst4.insert(5)
-    bst4.insert(13)
-    bst4.insert(25)
-    bst4.insert(11)
-    comparator = TreeComparator()
-    print("are identical trees ? :", comparator.compare_trees(bst3.root, bst4.root))
+    rbt = RedBlackTree()
+    rbt.insert(32)
+    rbt.insert(10)
+    rbt.insert(55)
+    rbt.insert(1)
+    rbt.insert(19)
+    rbt.insert(79)
+    rbt.insert(16)
+    rbt.insert(23)
+    rbt.insert(12)
+    rbt.traverse()
