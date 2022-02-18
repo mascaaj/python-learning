@@ -1,13 +1,23 @@
 """
-Binary search tree implemntation
+AVL tree implemntation
+Copied from binary search tree implementation
+
+@todo
+15NOV21
+Clean up methods and prototypes
+Add violation handling <- rotation
+Add height and balance checking methods
+
+15FEB22
+Completed & Tested
 """
 
 import sys
 sys.path.append(".")
-from tree_node import BSTNode
+from tree_node import AVLNode
 
 
-class BinarySearchTree:
+class AVLTree:
 
     def __init__(self):
         self.root = None
@@ -20,7 +30,7 @@ class BinarySearchTree:
         """
         if not self.root:
             print("root empty")
-            self.root = BSTNode(data, None)
+            self.root = AVLNode(data, None)
             # print("check for populated root ",self.root.data)
         else:
             self.insert_node(data, self.root)
@@ -62,13 +72,136 @@ class BinarySearchTree:
             if node.leftChild:
                 self.insert_node(data, node.leftChild)
             else:
-                node.leftChild = BSTNode(data, node)
+                node.leftChild = AVLNode(data, node)
+                node.height = max(self.calc_height(node.leftChild),
+                                  self.calc_height(node.rightChild)) + 1
         else:
             # print("insert as rightChild ", node.data, data)
             if node.rightChild:
                 self.insert_node(data, node.rightChild)
             else:
-                node.rightChild = BSTNode(data, node)
+                node.rightChild = AVLNode(data, node)
+                node.height = max(self.calc_height(node.leftChild),
+                                  self.calc_height(node.rightChild)) + 1
+        self.handle_violation(node)
+
+    def rotate_right(self, node):
+        """
+        Update references
+        Set new parent
+        update parent
+        """
+        # update references
+        print("rotating to the right on node :", node.data)
+        temp_left_node = node.leftChild
+        t = temp_left_node.rightChild
+        temp_left_node.rightChild = node
+        node.leftChild = t
+
+        # inform child about new parent assignment
+        if t:
+            t.parent = node
+        temp_parent = node.parent
+        node.parent = temp_left_node
+        temp_left_node.parent = temp_parent
+
+        # update parent about new child assignment
+        # First check if head node, next check if node reference was left or right
+        if temp_left_node.parent and temp_left_node.parent.leftChild == node:
+            temp_left_node.parent.leftChild = temp_left_node
+        if temp_left_node.parent and temp_left_node.parent.rightChild == node:
+            temp_left_node.parent.rightChild = temp_left_node
+
+        # root node assignment
+        if node == self.root:
+            self.root = temp_left_node
+
+        # new nodes position implies new height
+        node.height = max(self.calc_height(node.leftChild),
+                          self.calc_height(node.rightChild)) + 1
+        temp_left_node.height = max(self.calc_height(temp_left_node.leftChild),
+                                    self.calc_height(temp_left_node.rightChild)) + 1
+
+    def rotate_left(self, node):
+        """
+        Update references
+        Set new parent
+        update parent
+        """
+        # update references
+        print("rotating to the left on node :", node.data)
+        temp_right_node = node.rightChild
+        t = temp_right_node.leftChild
+        temp_right_node.leftChild = node
+        node.rightChild = t
+
+        # inform child about new parent assignment
+        if t:
+            t.parent = node
+        temp_parent = node.parent
+        node.parent = temp_right_node
+        temp_right_node.parent = temp_parent
+
+        # update parent about new child assignment
+        # First check if head node, next check if node reference was left or right
+        if temp_right_node.parent and temp_right_node.parent.leftChild == node:
+            temp_right_node.parent.leftChild = temp_right_node
+        if temp_right_node.parent and temp_right_node.parent.rightChild == node:
+            temp_right_node.parent.rightChild = temp_right_node
+
+        # root node assignment
+        if node == self.root:
+            self.root = temp_right_node
+
+        # new nodes position implies new height
+        node.height = max(self.calc_height(node.leftChild),
+                          self.calc_height(node.rightChild)) + 1
+        temp_right_node.height = max(self.calc_height(temp_right_node.leftChild),
+                                     self.calc_height(temp_right_node.rightChild)) + 1
+
+    def handle_violation(self, node):
+        """
+        Here node represents the parent of the inserted node
+        """
+        while node:
+            node.height = max(self.calc_height(node.leftChild),
+                              self.calc_height(node.rightChild)) + 1
+            self.violation_helper(node)
+            node = node.parent
+
+    def violation_helper(self, node):
+        '''
+        Need to assess left or right heavy violation
+            then assess if left left or left right heavy and vice versa
+            or assess if right left or right right heavy situation
+            perform rotations
+        '''
+        balance = self.calculate_balance(node)
+        if balance > 1:
+            # left heavy situation
+            if self.calculate_balance(node.leftChild) < 0:
+                # left-right heavy imbalance, rotate the child right
+                self.rotate_left(node.leftChild)
+            # rotate node left
+            self.rotate_right(node)
+
+        if balance < -1:
+            # right heavy situation
+            if self.calculate_balance(node.rightChild) > 0:
+                # right-left heavy imbalance, rotate the child left
+                self.rotate_right(node.rightChild)
+            # rotate node right
+            self.rotate_left(node)
+
+    def calc_height(self, node):
+        if not node:
+            return -1
+        return node.height
+
+    def calculate_balance(self, node):
+        if not node:
+            return 0
+        return self.calc_height(node.leftChild) - self.calc_height(node.rightChild)
 
     def traverse_in_order(self, node):
         if node.leftChild:
@@ -141,6 +274,7 @@ class BinarySearchTree:
                     print("deleting root node")
                     self.root = None
                 del node
+                self.handle_violation(parent)
 
             # middle node with one child, left
             elif node.leftChild and not node.rightChild:
@@ -157,6 +291,7 @@ class BinarySearchTree:
                 else:
                     self.root = node.leftChild
                 del node
+                self.handle_violation(parent)
 
             # middle node with one child, right
             elif not node.leftChild and node.rightChild:
@@ -173,6 +308,7 @@ class BinarySearchTree:
                 else:
                     self.root = node.rightChild
                 del node
+                self.handle_violation(parent)
 
             # middle node with 2 children
             elif node.leftChild and node.rightChild:
@@ -194,62 +330,14 @@ class BinarySearchTree:
         return node
 
 
-class TreeComparator:
-
-    def compare_trees(self, node1, node2):
-        """
-        Base cases:
-            if node1 and node2 are none
-            nodes are not equal, return false
-        """
-        # print("node1 data", node1.data)
-        # print("node2 data", node2.data)
-        if not node1 or not node2:
-            return node1 == node2
-
-        if node1.data is not node2.data:
-            return False
-
-        # Recursively check left and right nodes
-        left_same = self.compare_trees(node1.leftChild, node2.leftChild)
-        right_same = self.compare_trees(node1.rightChild, node2.rightChild)
-        return left_same and right_same
-
-
 if __name__ == "__main__":
-    bst = BinarySearchTree()
-    bst.insert(10)
-    bst.insert(30)
-    bst.insert(-1000)
-    bst.insert(3)
-    bst.insert(-4000)
-    bst.insert(-5000)
-    bst.insert(80)
-    bst.insert(900)
-    bst.insert(12)
-    bst.insert(2)
-    bst.insert(6)
-    bst.insert(11)
-    bst.insert(15)
-    bst.traverse()
-    # print("min item %s" % bst.get_min_value())
-    # print("max item %s" % bst.get_max_value())
-    bst.remove(12)
-    bst.traverse()
-
-    bst3 = BinarySearchTree()
-    bst4 = BinarySearchTree()
-
-    bst3.insert(10)
-    bst3.insert(5)
-    bst3.insert(13)
-    bst3.insert(25)
-    bst3.insert(11)
-
-    bst4.insert(10)
-    bst4.insert(5)
-    bst4.insert(13)
-    bst4.insert(25)
-    bst4.insert(11)
-    comparator = TreeComparator()
-    print("are identical trees ? :", comparator.compare_trees(bst3.root, bst4.root))
+    avlt = AVLTree()
+    avlt.insert(5)
+    avlt.insert(3)
+    avlt.insert(10)
+    avlt.insert(2)
+    avlt.insert(4)
+    avlt.insert(15)
+    avlt.remove(15)
+    avlt.remove(10)
+    avlt.traverse()
