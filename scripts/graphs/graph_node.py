@@ -1,7 +1,5 @@
 """
 Node class for graphs, might need refactoring
-<<<<<<< HEAD
-=======
 
 Modifying node class for dijkstra's implementation.
 Adding Edge class
@@ -14,7 +12,6 @@ Modifying  Edge class for Kruskal Algorithm
 Adding Vertex and KruskalNode class
 Add vertex adjacency list for Primm Jarnik class
 21FEB22
->>>>>>> feat/graphs
 """
 
 
@@ -25,8 +22,6 @@ class Node:
         self.adjacency_list = []
         self.visited = False
         self.enqueued = False
-<<<<<<< HEAD
-=======
         self.predecessor = None
         self.min_distance = float('inf')
 
@@ -60,4 +55,3 @@ class KruskalNode:
         self.node_id = node_id
         self.parent = parent
         self.rank = rank
->>>>>>> feat/graphs
