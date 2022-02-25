@@ -208,3 +208,69 @@ class QuickSort(Sort):
         pivot = self.partition(low, high)
         self.quick_sort(low, pivot - 1)
         self.quick_sort(pivot + 1, high)
+
+
+class MergeSort(Sort):
+    def __init__(self, data, ascending):
+        super().__init__(data, ascending)
+        self.result = [0] * len(self.data)
+
+    def sort(self):
+        data = self.data
+        time_start = time.time()
+        self.merge_sort(data)
+        time_stop = time.time()
+        self.time_elapsed = time_stop - time_start
+        if len(self.data) < 20:
+            print("Merge Sort : Data Length : Time Taken : ",
+                  self.result, " : ", len(self.data), " : ",
+                  round(self.time_elapsed, 2))
+        else:
+            print("Merge Sort : Data Length : Time Taken : ",
+                  len(self.result), " : ", round(self.time_elapsed, 2))
+
+    def merge_sort(self, data):
+        """
+        1. Divide phase
+        2. Conquor phase
+        @todo, improve use of member variables here
+        """
+
+        if len(data) == 1:
+            return
+
+        middle_index = len(data) // 2
+        left_half = data[:middle_index]
+        right_half = data[middle_index:]
+        self.merge_sort(left_half)
+        self.merge_sort(right_half)
+
+        i, j, k = 0, 0, 0
+
+        while i < len(left_half) and j < len(right_half):
+            if self.ascending:
+                if left_half[i] < right_half[j]:
+                    data[k] = left_half[i]
+                    i += 1
+                else:
+                    data[k] = right_half[j]
+                    j += 1
+            else:
+                if left_half[i] > right_half[j]:
+                    data[k] = left_half[i]
+                    i += 1
+                else:
+                    data[k] = right_half[j]
+                    j += 1
+            k += 1
+
+        while i < len(left_half):
+            data[k] = left_half[i]
+            i += 1
+            k += 1
+
+        while j < len(right_half):
+            data[k] = right_half[j]
+            j += 1
+            k += 1
+        self.result = data

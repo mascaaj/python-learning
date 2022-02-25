@@ -7,7 +7,7 @@ import random
 import sys
 sys.path.append(".")
 from sorting import BogoSort, BubbleSort, SelectionSort, InsertionSort
-from sorting import ShellSort, QuickSort
+from sorting import ShellSort, QuickSort, MergeSort
 
 
 def input_data(count):
@@ -44,9 +44,14 @@ def test_quick_sort(input, asc=True):
     algorithm.sort()
 
 
+def test_merge_sort(input, asc=True):
+    algorithm = MergeSort(input, asc)
+    algorithm.sort()
+
+
 if __name__ == "__main__":
 
-    # test_bogo_sort(input_data(10))
+    test_bogo_sort(input_data(10))
 
     test_bubble_sort(input_data(100))
     test_bubble_sort(input_data(1000))
@@ -56,19 +61,24 @@ if __name__ == "__main__":
     test_selection_sort(input_data(100))
     test_selection_sort(input_data(1000))
     test_selection_sort(input_data(10000))
-    # test_selection_sort(input_data(100000))
+    test_selection_sort(input_data(100000))
 
     test_insertion_sort(input_data(100))
     test_insertion_sort(input_data(1000))
     test_insertion_sort(input_data(10000))
-    # test_insertion_sort(input_data(100000))
+    test_insertion_sort(input_data(100000))
 
     test_shell_sort(input_data(100))
     test_shell_sort(input_data(1000))
     test_shell_sort(input_data(10000))
-    # test_shell_sort(input_data(100000))
+    test_shell_sort(input_data(100000))
 
     test_quick_sort(input_data(100))
     test_quick_sort(input_data(1000))
     test_quick_sort(input_data(10000))
-    # test_quick_sort(input_data(100000))
+    test_quick_sort(input_data(100000))
+
+    test_merge_sort(input_data(100))
+    test_merge_sort(input_data(1000))
+    test_merge_sort(input_data(10000))
+    test_merge_sort(input_data(100000))
