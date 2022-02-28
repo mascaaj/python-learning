@@ -7,11 +7,15 @@ import random
 import sys
 sys.path.append(".")
 from sorting import BogoSort, BubbleSort, SelectionSort, InsertionSort
-from sorting import ShellSort, QuickSort, MergeSort
+from sorting import ShellSort, QuickSort, MergeSort, CountingSort, RadixSort
 
 
 def input_data(count):
     return [random.randint(-count * 10, count * 10) for i in range(count)]
+
+
+def input_data2(count):
+    return [random.randint(0, count * 10) for i in range(count)]
 
 
 def test_bogo_sort(input, asc=True):
@@ -49,36 +53,56 @@ def test_merge_sort(input, asc=True):
     algorithm.sort()
 
 
+def test_counting_sort(input, asc=True):
+    algorithm = CountingSort(input, asc)
+    algorithm.sort()
+
+
+def test_radix_sort(input, asc=True):
+    algorithm = RadixSort(input, asc)
+    algorithm.sort()
+
+
 if __name__ == "__main__":
 
-    test_bogo_sort(input_data(10))
+    # test_bogo_sort(input_data(10))
 
-    test_bubble_sort(input_data(100))
-    test_bubble_sort(input_data(1000))
-    test_bubble_sort(input_data(10000))
+    # test_bubble_sort(input_data(100))
+    # test_bubble_sort(input_data(1000))
+    # test_bubble_sort(input_data(10000))
     # test_bubble_sort(input_data(100000))
 
-    test_selection_sort(input_data(100))
-    test_selection_sort(input_data(1000))
-    test_selection_sort(input_data(10000))
-    test_selection_sort(input_data(100000))
+    # test_selection_sort(input_data(100))
+    # test_selection_sort(input_data(1000))
+    # test_selection_sort(input_data(10000))
+    # test_selection_sort(input_data(100000))
 
-    test_insertion_sort(input_data(100))
-    test_insertion_sort(input_data(1000))
-    test_insertion_sort(input_data(10000))
-    test_insertion_sort(input_data(100000))
+    # test_insertion_sort(input_data(100))
+    # test_insertion_sort(input_data(1000))
+    # test_insertion_sort(input_data(10000))
+    # test_insertion_sort(input_data(100000))
 
-    test_shell_sort(input_data(100))
-    test_shell_sort(input_data(1000))
-    test_shell_sort(input_data(10000))
-    test_shell_sort(input_data(100000))
+    # test_shell_sort(input_data(100))
+    # test_shell_sort(input_data(1000))
+    # test_shell_sort(input_data(10000))
+    # test_shell_sort(input_data(100000))
 
-    test_quick_sort(input_data(100))
-    test_quick_sort(input_data(1000))
-    test_quick_sort(input_data(10000))
-    test_quick_sort(input_data(100000))
+    # test_quick_sort(input_data(100))
+    # test_quick_sort(input_data(1000))
+    # test_quick_sort(input_data(10000))
+    # test_quick_sort(input_data(100000))
 
-    test_merge_sort(input_data(100))
-    test_merge_sort(input_data(1000))
-    test_merge_sort(input_data(10000))
-    test_merge_sort(input_data(100000))
+    # test_merge_sort(input_data(100))
+    # test_merge_sort(input_data(1000))
+    # test_merge_sort(input_data(10000))
+    # test_merge_sort(input_data(100000))
+
+    # test_counting_sort(input_data(100))
+    # test_counting_sort(input_data(1000))
+    # test_counting_sort(input_data(10000))
+    # test_counting_sort(input_data(100000))
+
+    test_radix_sort(input_data2(10))
+    test_radix_sort(input_data2(1000))
+    test_radix_sort(input_data2(10000))
+    test_radix_sort(input_data2(100000))

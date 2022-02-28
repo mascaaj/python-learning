@@ -1,6 +1,9 @@
 """
 Implementations of various sorting algorithms
 24FEB22
+
+Add counting sort & radix sort
+28FEB22
 """
 import random
 import time
@@ -274,3 +277,72 @@ class MergeSort(Sort):
             j += 1
             k += 1
         self.result = data
+
+
+class CountingSort(Sort):
+    def __init__(self, data, ascending):
+        super().__init__(data, ascending)
+        self.count_array = [0] * (max(self.data) - min(self.data) + 1)
+        self.result = [0] * len(self.data)
+
+    def sort(self):
+        time_start = time.time()
+        for i in range(len(self.data)):
+            # increment count values of the array.
+            # subtract min values of array to normalize array, deal with exceptions
+            self.count_array[self.data[i] - min(self.data)] += 1
+
+        z = 0
+        for i in range(min(self.data), max(self.data) + 1):
+            # check on cells with values greater than zero
+            # deal with normalizaton setup earlier
+            while self.count_array[i - min(self.data)] > 0:
+                # convert from frequency domain back to integer space
+                self.result[z] = i
+                z += 1
+                self.count_array[i - min(self.data)] -= 1
+        time_stop = time.time()
+        self.time_elapsed = time_stop - time_start
+        if len(self.data) < 20:
+            print("Counting Sort : Data Length : Time Taken : ",
+                  self.result, " : ", len(self.data), " : ",
+                  round(self.time_elapsed, 2))
+        else:
+            print("Counting Sort : Data Length : Time Taken : ",
+                  len(self.result), " : ", round(self.time_elapsed, 2))
+
+
+class RadixSort(Sort):
+
+    def __init__(self, data, ascending):
+        super().__init__(data, ascending)
+        self.ITEMS_IN_BUCKET = 10
+
+    def get_digits(self):
+        return len(str(max(self.data)))
+
+    def sort(self):
+        time_start = time.time()
+        for digit in range(self.get_digits()):
+            self.counting_sort(digit)
+        time_stop = time.time()
+        self.time_elapsed = time_stop - time_start
+        if len(self.data) < 20:
+            print("Radix Sort : Data Length : Time Taken : ",
+                  self.data, " : ", len(self.data), " : ",
+                  round(self.time_elapsed, 2))
+        else:
+            print("Radix Sort : Data Length : Time Taken : ",
+                  len(self.data), " : ", round(self.time_elapsed, 2))
+
+    def counting_sort(self, d):
+        count_array = [[] for _ in range(self.ITEMS_IN_BUCKET)]
+        for num in self.data:
+            index = (num // (10 ** d)) % 10
+            count_array[index].append(num)
+
+        z = 0
+        for i in range(len(count_array)):
+            while len(count_array[i]) > 0:
+                self.data[z] = count_array[i].pop(0)
+                z += 1
